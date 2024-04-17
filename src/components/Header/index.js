@@ -1,7 +1,9 @@
 import React from "react";
+import { useHistory } from "react-router-dom";
 
 import Cart from "../../assets/cart-header.svg";
 import Person from "../../assets/person.svg";
+import { useUser } from "../../hooks/UserContext";
 import {
   Container,
   ContainerLeft,
@@ -12,16 +14,34 @@ import {
 } from "./styles";
 
 export function Header() {
+  const { logout, userData } = useUser();
+  const {
+    push,
+    location: { pathname }
+  } = useHistory();
+
+  const logoutUser = () => {
+    logout();
+    push("/login");
+  };
+
   return (
     <Container>
       <ContainerLeft>
-        <PagLink>Home</PagLink>
-        <PagLink>Ver Produtos</PagLink>
+        <PagLink onClick={() => push("/")} isActive={pathname === "/"}>
+          Home
+        </PagLink>
+        <PagLink
+          onClick={() => push("/produtos")}
+          isActive={pathname.includes("/produtos")}
+        >
+          Ver Produtos
+        </PagLink>
       </ContainerLeft>
 
       <ContainerRight>
         <PagLink>
-          <img src={Cart} alt="carriho" />
+          <img src={Cart} alt="carriho" onClick={() => push("/carrinho")} />
         </PagLink>
         <div className="line"></div>
         <PagLink>
@@ -29,8 +49,8 @@ export function Header() {
         </PagLink>
 
         <ContainerText>
-          <p>Ola,Gustavo</p>
-          <PagLinkExit>Sair</PagLinkExit>
+          <p>Olá, {userData.name}</p>
+          <PagLinkExit onClick={logoutUser}>Sair</PagLinkExit>
         </ContainerText>
       </ContainerRight>
     </Container>

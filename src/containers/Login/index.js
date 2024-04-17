@@ -7,7 +7,7 @@ import * as Yup from "yup";
 
 import LoginImg from "../../assets/login.svg";
 import Logo from "../../assets/logo.svg";
-import { Button } from "../../components";
+import { Button, ErrorMessage } from "../../components";
 import { useUser } from "../../hooks/UserContext";
 import apiCodeBurger from "../../services/api";
 import {
@@ -16,16 +16,13 @@ import {
   ContainerItens,
   Label,
   Input,
-  SignInLink,
-  ErrorMessage
+  SignInLink
 } from "./styles";
 
 export function Login() {
   const history = useHistory();
 
-  const { putUserData, userData } = useUser();
-
-  console.log(userData);
+  const { putUserData } = useUser();
 
   const schema = Yup.object().shape({
     email: Yup.string()
@@ -61,7 +58,11 @@ export function Login() {
       putUserData(data);
 
       setTimeout(() => {
-        history.push("/");
+        if (data.admin) {
+          history.push("/pedidos");
+        } else {
+          history.push("/");
+        }
       }, 1000);
     } catch (error) {}
   };
